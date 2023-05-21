@@ -13,10 +13,9 @@ export const useTodoStore = defineStore('todo', {
       try {
         const todoService = new TodoService();
         const todos = await todoService.getTodos();
-        const modifiedTodos = todos.map(todo => ({
-          ...todo,
-          createdDate: new Date(todo.createdDate).toLocaleDateString("fr-FR") + " " + new Date(todo.createdDate).toLocaleTimeString("fr-FR"),
-          todoDate: new Date(todo.todoDate).toLocaleDateString("fr-FR") + " " + new Date(todo.todoDate).toLocaleTimeString("fr-FR")
+        const modifiedTodos = todos.map(todo => ({...todo,
+          createdDate: todo.createdDate.indexOf("/") < 0 ? new Date(todo.createdDate).toLocaleDateString("fr-FR") + " " + new Date(todo.createdDate).toLocaleTimeString("fr-FR") : todo.createdDate,
+          todoDate: todo.todoDate.indexOf("/") < 0 ? new Date(todo.todoDate).toLocaleDateString("fr-FR") + " " + new Date(todo.todoDate).toLocaleTimeString("fr-FR") : todo.todoDate,
         }));
         this.todos = modifiedTodos;
       } catch (error) {
