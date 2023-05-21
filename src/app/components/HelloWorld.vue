@@ -157,12 +157,13 @@ import store from '../stores/pinia'
 import { useTodoStore } from "../stores/todoStore.ts";
 
 const todoStore = useTodoStore(store);
+await todoStore.fetchTodos();
 
 export default {
   name: "HelloWorld",
   data() {
-    todoStore.fetchTodos()
-    return {  
+    
+    return {   
       todos: todoStore.todos,
       title: "",
       editedTask: null,
