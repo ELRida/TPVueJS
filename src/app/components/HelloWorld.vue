@@ -251,8 +251,8 @@ export default {
       let todo = this.todos.find((x) => x.id === id);
       this.title = todo.title;
       this.editTodo = true;
+      this.timeCreate = null;
 
-      // Initialisation de la date par défaut avec la valeur du todo
       console.log(todo.todoDate.substring(0, 10))
       this.due = this.formattedDueDate(todo.todoDate.substring(0, 10));
       this.editedTask = todo;
