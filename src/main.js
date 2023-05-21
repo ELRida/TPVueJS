@@ -7,11 +7,10 @@ import 'bootstrap/dist/css/bootstrap.css'
 
 loadFonts()
 
-const app = createApp(App)
+createApp(App)
     .use(vuetify)
     .mount('#app')
 
-const pinia = createPinia();
-
-app.use(pinia);
-app.mount('#app');
+createApp(App)
+    .user(createPinia())
+    .mount('#app');

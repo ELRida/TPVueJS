@@ -1,16 +1,15 @@
 <template>
   <v-container>
-
     <div class="contianer_todo">
       <h1 class="titleTodo">Ma Todolist</h1>
     </div>
 
     <div class="box_search_add">
-
       <v-text-field
         placeholder="Recherchez une tâche"
         class="search_todo"
-        v-model="search_room"/>
+        v-model="search_room"
+      />
 
       <div class="button_add">
         <button class="add_todo" @click="addTodoList()">
@@ -18,11 +17,9 @@
           Ajouter une tâche
         </button>
       </div>
-
     </div>
 
     <table class="table">
-
       <thead>
         <tr>
           <th scope="col">#</th>
@@ -39,8 +36,8 @@
           <td>Mark</td>
           <td>Otto</td>
           <td>@mdo</td>
-          <td> 
-            <v-icon small class="mr-2" > mdi-pencil </v-icon>
+          <td>
+            <v-icon small class="mr-2"> mdi-pencil </v-icon>
             <v-icon small> mdi-delete </v-icon>
           </td>
         </tr>
@@ -55,7 +52,6 @@
           </td>
         </tr>
       </tbody>
-      
     </table>
     <!-- DIALOG -->
     <v-dialog
@@ -95,88 +91,101 @@
   </v-container>
 </template>
 
-<script> 
-import { useTodoStore } from './store/todoStore';
-
+<script>
+import { useTodoStore } from "../store/todoStore";
 
 export default {
   name: "HelloWorld",
 
-  setup() {
-    //const todoStore = useTodoStore(); // Instancie le store
-
-    // Déclare les variables du store que tu souhaites utiliser dans ton template
-    //const todos = todoStore.todos;
-
-    // Déclare les méthodes d'action du store que tu souhaites utiliser dans tes méthodes
-    // const addTodoList = () => {
-    //   todoStore.addTodo();
-    // };
-
+  data() {
     return {
-      //todos,
-      //addTodoList,
+      task: "",
+      editedTask: null,
+      tasks: [
+        {
+          name: "Oui monsieur",
+          date: new Date().toLocaleDateString("fr-FR"),
+          status: "to-do",
+        },
+        {
+          name: "Oui",
+          date: new Date().toLocaleDateString("fr-FR"),
+          status: "in-progress",
+        },
+      ],
+      addTodo: false,
+      editTodo: false,
+      due: null,
+      search_room: "",
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
     };
   },
-
-  data: () => ({   
-    ecosystem: [
-      {
-        text: "vuetify-loader",
-        href: "https://github.com/vuetifyjs/vuetify-loader/tree/next",
-      },
-      {
-        text: "github",
-        href: "https://github.com/vuetifyjs/vuetify/tree/next",
-      },
-      {
-        text: "awesome-vuetify",
-        href: "https://github.com/vuetifyjs/awesome-vuetify",
-      },
-    ],
-    importantLinks: [
-      {
-        text: "Chat",
-        href: "https://community.vuetifyjs.com",
-      },
-      {
-        text: "Made with Vuetify",
-        href: "https://madewithvuejs.com/vuetify",
-      },
-      {
-        text: "Twitter",
-        href: "https://twitter.com/vuetifyjs",
-      },
-      {
-        text: "Articles",
-        href: "https://medium.com/vuetify",
-      },
-    ],
-    whatsNext: [
-      {
-        text: "Explore components",
-        href: "https://vuetifyjs.com",
-      },
-      {
-        text: "Roadmap",
-        href: "https://vuetifyjs.com/introduction/roadmap/",
-      },
-      {
-        text: "Frequently Asked Questions",
-        href: "https://vuetifyjs.com/getting-started/frequently-asked-questions",
-      },
-    ],
-    addTodo: false,
-  }),
-
   methods: {
     addTodoList() {
       this.addTodo = true;
-      //todoStore.addTodo(); // Appelle la méthode d'action du store
+      this.task = "";
+      this.due = null;
+
+      if (this.date === this.due) {
+        this.date = null;
+      }
     },
     closeDialog() {
-      this;
       this.addTodo = false;
+    },
+    closeDialogEdit() {
+      this.editTodo = false;
+    },
+    submitTask() {
+      if (this.task.length === 0) return;
+
+      this.tasks.push({
+        name: this.task,
+        date: this.due,
+        status: "todo",
+      });
+
+      this.task = "";
+      this.due = null;
+
+      if (this.date === this.due) {
+        this.date = null;
+      }
+    },
+    dialogEditTask(index) {
+      this.editTodo = true;
+      this.task = this.tasks[index].name;
+
+      if (index < 2) {
+        this.due = new Date().toLocaleDateString("fr-FR");
+      } else {
+        this.due = this.tasks[index].date;
+      }
+
+      this.editedTask = this.tasks[index];
+    },
+    editTask() {
+      if (!this.editedTask) return;
+
+      this.editedTask.name = this.task;
+      this.editedTask.date = this.due;
+      this.task = "";
+      this.due = null;
+      this.editedTask = null;
+      this.editTodo = false;
+    },
+    deleteTask(index) {
+      this.tasks.splice(index, 1);
+    },
+  },
+
+  computed: {
+    filteredTodo() {
+      return this.tasks.filter((task) =>
+        task.name.toLowerCase().includes(this.search_room.toLowerCase())
+      );
     },
   },
 };
