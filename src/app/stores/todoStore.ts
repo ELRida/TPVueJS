@@ -15,8 +15,8 @@ export const useTodoStore = defineStore('todo', {
         const todos = await todoService.getTodos();
         const modifiedTodos = todos.map(todo => ({
           ...todo,
-          createdDate: new Date(todo.createdDate).toLocaleDateString("fr-FR") + " " + new Date(todo.createdDate).toLocaleTimeString("fr-FR"),
-          todoDate: new Date(todo.todoDate).toLocaleDateString("fr-FR") + " " + new Date(todo.createdDate).toLocaleTimeString("fr-FR")
+          createdDate: new Date(todo.createdDate).toLocaleDateString("fr-FR", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + new Date(todo.createdDate).toLocaleTimeString("fr-FR", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+          todoDate: new Date(todo.todoDate).toLocaleDateString("fr-FR", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " " + new Date(todo.todoDate).toLocaleTimeString("fr-FR", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
         }));
         this.todos = modifiedTodos;
       } catch (error) {
