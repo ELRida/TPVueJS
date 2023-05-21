@@ -91,7 +91,6 @@
               class="btn-action"
               text
               @click="submitTask()"
-              :loading="loadingDelete"
             >
               Valider
             </v-btn>
@@ -217,9 +216,9 @@ export default {
 
       var todo = {
         title : this.title,
-        createdDate :  new Date(this.due).toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR"),
+        todoDate :  new Date(this.due).toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR"),
         status : "à faire",
-        todoDate : new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR")
+        createdDate : new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR")
       }
  
       let value = await todoStore.addTodo(todo);
