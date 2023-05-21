@@ -252,10 +252,8 @@ export default {
       this.title = todo.title;
       this.editTodo = true;
       this.timeCreate = todo.todoDate.substring(11, 16);
-
-      console.log("todoDate", todo.todoDate)
       this.modifyTodoDate = this.formattedDueDate(todo.todoDate.substring(0, 10));
-      console.log('modifyTodoDate',this.modifyTodoDate)
+
       this.editedTask = todo;
     },
 
@@ -302,7 +300,6 @@ export default {
     },
 
     formattedDueDate(date) {  
-      console.log('formattedDate',date)
       if (date) {
           const [day, month, year] = date.split("/");
           const formattedDate = new Date(year + "-" + month + "-" + day);
