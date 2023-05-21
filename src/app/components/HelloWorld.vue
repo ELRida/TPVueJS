@@ -116,7 +116,7 @@
     </v-dialog>
 
     <v-dialog
-      class=" dialogAddTodo"
+      class=" dialogEditTodo"
       v-model="editTodo"
       width="500"
       :retain-focus="false"
@@ -127,14 +127,19 @@
             Modification de tâche
           </v-sheet>
         </v-card-title>
-        <div class="box_add">
-          <v-text-field
+        <v-text-field
             placeholder="Nom de la tâche"
             class="add_todo"
-            id="title_todo"
             v-model="title"
           />
-
+        <div class="box_add">
+          <div class="title_todo">
+            <v-text-field
+              type="time"
+              label="Date"
+              v-model="timeCreate"
+            />
+          </div>
           <div>
             <v-text-field
               class="datapicker_todo"
@@ -258,7 +263,7 @@ export default {
 
       this.editedTask.title = this.title;
       this.editedTask.createdDate = this.due;
-      this.editedTask.todoDate = new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR");
+      this.editedTask.todoDate = new Date().toLocaleDateString("fr-FR") + " " +  new Date("2001-11-12T"+this.timeCreate).toLocaleTimeString("fr-FR").split('T')[0];
 
       let value = await todoStore.updateTodoStatus(this.editedTask);
 
