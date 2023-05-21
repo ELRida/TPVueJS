@@ -3,4 +3,5 @@ export default interface Todo {
     title: string;
     completed: string;
     createdDate: Date;
+    todoDate: Date;
 }

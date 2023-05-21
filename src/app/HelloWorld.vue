@@ -1,22 +1,28 @@
 <template>
   <v-container>
+
     <div class="contianer_todo">
       <h1 class="titleTodo">Ma Todolist</h1>
     </div>
+
     <div class="box_search_add">
+
       <v-text-field
         placeholder="Recherchez une tâche"
         class="search_todo"
-        v-model="search_room"
-      ></v-text-field>
+        v-model="search_room"/>
+
       <div class="button_add">
         <button class="add_todo" @click="addTodoList()">
           <v-icon class="close_icon">mdi-plus</v-icon>
           Ajouter une tâche
         </button>
       </div>
+
     </div>
+
     <table class="table">
+
       <thead>
         <tr>
           <th scope="col">#</th>
@@ -26,35 +32,30 @@
           <th scope="col">Actions</th>
         </tr>
       </thead>
+
       <tbody>
         <tr>
           <th scope="row">1</th>
           <td>Mark</td>
           <td>Otto</td>
           <td>@mdo</td>
-          <td> <v-icon small class="mr-2" > mdi-pencil </v-icon>
-                    <v-icon small> mdi-delete </v-icon>
-</td>
+          <td> 
+            <v-icon small class="mr-2" > mdi-pencil </v-icon>
+            <v-icon small> mdi-delete </v-icon>
+          </td>
         </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-          <td> <v-icon small class="mr-2"> mdi-pencil </v-icon>
-                    <v-icon small > mdi-delete </v-icon>
-</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>Larry</td>
-          <td>the Bird</td>
-          <td>@twitter</td>
-          <td> <v-icon small class="mr-2"> mdi-pencil </v-icon>
-                    <v-icon small> mdi-delete </v-icon>
-</td>
+        <tr v-for="todo in todos" :key="todo.id">
+          <th scope="row">{{ todo.id }}</th>
+          <td>{{ todo.title }}</td>
+          <td>{{ todo.createdDate }}</td>
+          <td>{{ todo.completed }}</td>
+          <td>
+            <v-icon small class="mr-2">mdi-pencil</v-icon>
+            <v-icon small>mdi-delete</v-icon>
+          </td>
         </tr>
       </tbody>
+      
     </table>
     <!-- DIALOG -->
     <v-dialog
@@ -95,10 +96,39 @@
 </template>
 
 <script>
+
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from '../App.vue';
+import { useTodoStore } from './store/todoStore';
+
+const pinia = createPinia();
+const app = createApp(App);
+
+app.use(pinia);
+app.mount('#app');
+
 export default {
   name: "HelloWorld",
 
-  data: () => ({
+  setup() {
+    const todoStore = useTodoStore(); // Instancie le store
+
+    // Déclare les variables du store que tu souhaites utiliser dans ton template
+    const todos = todoStore.todos;
+
+    // Déclare les méthodes d'action du store que tu souhaites utiliser dans tes méthodes
+    const addTodoList = () => {
+      todoStore.addTodo();
+    };
+
+    return {
+      todos,
+      addTodoList,
+    };
+  },
+
+  data: () => ({   
     ecosystem: [
       {
         text: "vuetify-loader",
@@ -147,9 +177,11 @@ export default {
     ],
     addTodo: false,
   }),
+
   methods: {
     addTodoList() {
       this.addTodo = true;
+      todoStore.addTodo(); // Appelle la méthode d'action du store
     },
     closeDialog() {
       this;
