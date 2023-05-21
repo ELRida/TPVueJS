@@ -24,11 +24,12 @@
         <tr>
           <th scope="col">#</th>
           <th scope="col">Tâches</th>
-          <th scope="col">À faire pour le</th>
+          <th scope="col">Date de création</th>
           <th scope="col">Statut</th>
+          <th scope="col">À faire pour</th>
           <th scope="col">Actions</th>
         </tr>
-      </thead>
+      </thead> 
 
       <tbody>
 
@@ -38,6 +39,7 @@
           <td>{{ todo.title }}</td>
           <td>{{ todo.createdDate }}</td>
           <td>{{ todo.status }}</td>
+          <td>{{ todo.todoDate }}</td>
           <td>
             <v-icon small class="mr-2" @click="dialogEditTask(todo.id)"
               >mdi-pencil</v-icon

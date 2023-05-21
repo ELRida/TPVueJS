@@ -22,10 +22,10 @@ export const useTodoStore = defineStore('todo', {
       } catch (error) {
         return 'Erreur lors de la récupération des tâches';
       }
-    },
-
+    }, 
+ 
     async addTodo(todo: Todo) {
-      try {
+      try { 
         const todoService = new TodoService();
         const newTodo = await todoService.createTodo(todo);
         this.todos.push(newTodo);
