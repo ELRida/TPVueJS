@@ -253,8 +253,9 @@ export default {
       this.editTodo = true;
       this.timeCreate = null;
 
-      console.log(todo.todoDate.substring(0, 10))
+      console.log("todoDate", todo.todoDate)
       this.due = this.formattedDueDate(todo.todoDate.substring(0, 10));
+      console.log('due',this.due)
       this.editedTask = todo;
     },
 
@@ -267,6 +268,7 @@ export default {
 
       let value = await todoStore.updateTodoStatus(this.editedTask);
 
+      this.closeDialogEdit();
       this.snackbar = true;
       this.textSnackBar = value;
     },
@@ -300,6 +302,7 @@ export default {
     },
 
     formattedDueDate(date) {  
+      console.log('formattedDate',date)
       if (date) {
           const [day, month, year] = date.split("/");
           const formattedDate = new Date(year + "-" + month + "-" + day);
