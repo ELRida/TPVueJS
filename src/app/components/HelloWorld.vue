@@ -187,8 +187,9 @@ const todoStore = useTodoStore(store);
 await todoStore.fetchTodos();
 
 export default {
-  name: "HelloWorld",
+  name: "TodoApp",
   data() {
+
     return {
       snackbar: false,
       textSnackBar: "",
