@@ -171,24 +171,19 @@ const todoStore = useTodoStore(store);
 await todoStore.fetchTodos();
 
 export default {
-  name: "HelloWorld",
+  name: "TodoApp",
   data() {
-    
     return {   
       snackbar: false,
       textSnackBar: "",
-
-      todos: todoStore.todos,
-      
+      todos: todoStore.todos,     
       title: "",
       editedTask: null,
       addTodo: false,
       editTodo: false,
       createdDate: null,
       search_room: "",
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10), 
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10), 
     };
   },
 
