@@ -35,7 +35,7 @@
         <tr v-for="todo in filteredTodo" :key="todo.id">
           <th scope="row">{{ todo.id }}</th>
           <td><span :class="{'finished': todo.status === 'terminée'}">{{ todo.title }}</span></td>
-          <td>{{ todo.createdDate }}</td>
+          <td><span :class="{'finished': todo.status === 'terminée'}">{{ todo.createdDate }}</span></td>
           <td><span class="pointer" @click="changeStatus(todo)"
               :class="{'text-danger': todo.status === 'à faire',
                         'text-warning': todo.status === 'en cours',
@@ -43,7 +43,7 @@
             
             }"
             >{{ firstCharUpper(todo.status) }}</span></td>
-          <td>{{ todo.todoDate }}</td>
+          <td><span :class="{'finished': todo.status === 'terminée'}">{{ todo.todoDate }}</span></td>
           <td>
             <v-icon small class="mr-2" @click="dialogEditTask(todo.id)"
               >mdi-pencil</v-icon
@@ -55,24 +55,31 @@
     </table>
 
     <v-dialog
-      class="dialogDeleteTemplate"
+      class=" dialogAddTodo"
       v-model="addTodo"
       width="500"
       :retain-focus="false"
     >
       <v-card class="dialog_add">
-        <v-card-title style="justify-content: center">
+        <v-card-title style="justify-content: center"
+>
           <v-sheet class="mb-4 mt-4 text-center title-bold text-delete">
             Ajouter une tâche
           </v-sheet>
         </v-card-title>
-
-        <div class="box_add">
-          <v-text-field
+        <v-text-field
             placeholder="Nom de la tâche"
             class="add_todo"
             v-model="title"
           />
+        <div class="box_add">
+          <div class="title_todo">
+            <v-text-field
+              type="time"
+              label="Date"
+              v-model="timeCreate"
+            />
+          </div>
           <div>
             <v-text-field
               class="datapicker_todo"
@@ -82,32 +89,34 @@
             />
           </div>
         </div>
-        
+       
 
         <v-card-actions class="text-center">
           <v-spacer class="confirmChoice">
             <v-btn
               style="margin-right: 15px"
-              class="btn-action-cancel"
+              class="btn-action-cancel background_button_back"
               text
               @click="closeDialog()"
             >
               Annuler
             </v-btn>
             <v-btn
-              class="btn-action"
+              class="btn-action background_button_add"
               text
               @click="submitTask()"
             >
               Valider
             </v-btn>
           </v-spacer>
+          <template>
+</template>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-dialog
-      class="dialogDeleteTemplate"
+      class=" dialogAddTodo"
       v-model="editTodo"
       width="500"
       :retain-focus="false"
@@ -122,6 +131,7 @@
           <v-text-field
             placeholder="Nom de la tâche"
             class="add_todo"
+            id="title_todo"
             v-model="title"
           />
  
@@ -138,13 +148,13 @@
           <v-spacer class="confirmChoice">
             <v-btn
               style="margin-right: 15px"
-              class="btn-action-cancel"
+              class="btn-action-cancel background_button_add "
               text
               @click="editTask()"
             >
               Valider
             </v-btn>
-            <v-btn class="btn-action" text @click="closeDialogEdit()">
+            <v-btn class="btn-action background_button_back" text @click="closeDialogEdit()">
               Annuler
             </v-btn>
           </v-spacer>
@@ -193,6 +203,7 @@ export default {
       editTodo: false,
       createdDate: null,
        search_task: "",
+       timeCreate: "",
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10), 
@@ -205,6 +216,7 @@ export default {
     addTodoList() {
       this.addTodo = true;
       this.title = "";
+      this.timeCreate="";
       this.due = null;
       if (this.date === this.due) {
         this.date = null;
@@ -220,11 +232,11 @@ export default {
     },
 
     async submitTask() {
-      if (this.title.length === 0) return; // il faut mettre des notifications toast
+      if (this.title.length === 0) return; 
 
       var todo = {
         title : this.title,
-        todoDate :  new Date(this.due).toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR"),
+        todoDate :  new Date(this.due).toLocaleDateString("fr-FR") + " " + new Date("2001-11-12T"+this.timeCreate).toLocaleTimeString("fr-FR").split('T')[0],
         status : "à faire",
         createdDate : new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR")
       }
@@ -329,7 +341,15 @@ export default {
 }
 .add_todo .v-input__control {
   min-width: 150px;
-  max-width: 180px;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+.title_todo .v-field__input{
+  background-color: revert;
+}
+.title_todo .v-input__control{
+  min-width: 50px;
+  max-width: 150px;
 }
 .add_todo .v-field__overlay {
   background: none;
@@ -339,6 +359,7 @@ export default {
 }
 .box_add {
   display: flex;
+  justify-content: space-between;
 }
 .box_add .v-input--horizontal {
   width: 240px;
@@ -351,5 +372,14 @@ export default {
 }
 .finished{
   text-decoration: line-through;
+}
+.background_button_back{
+  background: #df4f5d;
+  color: white !important;
+}
+.background_button_add{
+  background: #7edb82;
+  color: white !important;
+
 }
 </style>
