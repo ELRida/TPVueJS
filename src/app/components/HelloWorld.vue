@@ -214,18 +214,19 @@ export default {
       this.due = todo.createdDate;
       this.editTodo = true;
  
-      this.editedTask = this.todos.find(x => x.id == id);
+      this.editedTask = todo;
     },
 
-    async editTask() {
-      if (!this.editedTask) return;
-
+    async editTask() { 
+      if (!this.editedTask) return; 
+ 
       this.editedTask.title = this.title;
-      this.editedTask.date = this.due;
-      this.title = "";
-      this.due = null;
-      this.editedTask = null;
-      this.editTodo = false;
+      this.editedTask.createdDate = this.due;
+      this.editedTask.status = "pas de statut";
+      this.editedTask.todoDate = new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR");
+
+      let value = await todoStore.updateTodoStatus(this.editedTask);
+      console.log(value);
     }, 
 
     async deleteTask(id) {
