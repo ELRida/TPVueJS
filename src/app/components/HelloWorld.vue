@@ -8,7 +8,7 @@
       <v-text-field
         placeholder="Recherchez une tâche"
         class="search_todo"
-        v-model=" search_task"
+        v-model="search_task"
       />
 
       <div class="button_add">
@@ -29,7 +29,7 @@
           <th scope="col">À faire pour le</th>
           <th scope="col">Actions</th>
         </tr>
-      </thead> 
+      </thead>
 
       <tbody>
         <tr v-for="todo in filteredTodo" :key="todo.id">
@@ -134,7 +134,7 @@
             id="title_todo"
             v-model="title"
           />
- 
+
           <div>
             <v-text-field
               class="datapicker_todo"
@@ -162,17 +162,11 @@
       </v-card>
     </v-dialog>
 
-     <v-snackbar
-      v-model="snackbar"
-      :timeout="2000">
+    <v-snackbar v-model="snackbar" :timeout="2000">
       {{ textSnackBar }}
 
       <template v-slot:actions>
-        <v-btn
-          color="pink"
-          variant="text"
-          @click="snackbar = false"
-        >
+        <v-btn color="pink" variant="text" @click="snackbar = false">
           Fermer
         </v-btn>
       </template>
@@ -181,7 +175,7 @@
 </template>
 
 <script>
-import store from '../stores/pinia'
+import store from "../stores/pinia";
 import { useTodoStore } from "../stores/todoStore.ts";
 
 const todoStore = useTodoStore(store);
@@ -190,28 +184,24 @@ await todoStore.fetchTodos();
 export default {
   name: "HelloWorld",
   data() {
-    
-    return {   
+    return {
       snackbar: false,
       textSnackBar: "",
 
       todos: todoStore.todos,
-      
+
       title: "",
       editedTask: null,
       addTodo: false,
       editTodo: false,
       createdDate: null,
-       search_task: "",
-       timeCreate: "",
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10), 
-      status: ['à faire', 'en cours', 'terminée']
+      search_task: "",
+      timeCreate: "",
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
+      status: ["à faire", "en cours", "terminée"],
     };
   },
 
-  
   methods: {
     addTodoList() {
       this.addTodo = true;
@@ -222,7 +212,7 @@ export default {
         this.date = null;
       }
     },
-    
+
     closeDialog() {
       this.addTodo = false;
     },
@@ -248,24 +238,24 @@ export default {
       this.textSnackBar = value;
 
       if (this.date === this.due) {
-        this.date = null; 
+        this.date = null;
       }
     },
 
     async dialogEditTask(id) {
       let todo = this.todos.find((x) => x.id === id);
-  this.title = todo.title;
-  this.editTodo = true;
+      this.title = todo.title;
+      this.editTodo = true;
 
-  // Initialisation de la date par défaut avec la valeur du todo
-  this.due = todo.todoDate.substring(0, 10);
-
-  this.editedTask = todo;
+      // Initialisation de la date par défaut avec la valeur du todo
+      console.log(todo.todoDate.substring(0, 10))
+      this.due = this.formattedDueDate(todo.todoDate.substring(0, 10));
+      this.editedTask = todo;
     },
 
-    async editTask() { 
-      if (!this.editedTask) return; 
- 
+    async editTask() {
+      if (!this.editedTask) return;
+
       this.editedTask.title = this.title;
       this.editedTask.createdDate = this.due;
       this.editedTask.todoDate = new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR");
@@ -274,40 +264,55 @@ export default {
 
       this.snackbar = true;
       this.textSnackBar = value;
-    }, 
-    firstCharUpper(str){
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  },
+    },
+    
+    firstCharUpper(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    },
 
     async deleteTask(id) {
-      this.todos.splice(this.todos.indexOf(this.todos.find(x => x.id === id)), 1);
+      this.todos.splice(
+        this.todos.indexOf(this.todos.find((x) => x.id === id)),
+        1
+      );
       let value = await todoStore.removeTodo(id);
 
       this.snackbar = true;
       this.textSnackBar = value;
-    }, 
+    },
+
     async changeStatus(todo) {
-  let newIndex = this.status.indexOf(todo.status) + 1;
-  if (newIndex >= this.status.length) newIndex = 0;
-  const newStatus = this.status[newIndex];
+      let newIndex = this.status.indexOf(todo.status) + 1;
+      if (newIndex >= this.status.length) newIndex = 0;
+      const newStatus = this.status[newIndex];
 
-  todo.status = newStatus;
+      todo.status = newStatus;
 
-  let value = await todoStore.updateTodoStatus(todo);
+      let value = await todoStore.updateTodoStatus(todo);
 
-  this.snackbar = true;
-  this.textSnackBar = value;
-},
-  
+      this.snackbar = true;
+      this.textSnackBar = value;
+    },
+
+    formattedDueDate(date) {  
+      if (date) {
+          const [day, month, year] = date.split("/");
+          const formattedDate = new Date(year + "-" + month + "-" + day);
+        return formattedDate.toISOString().split('T')[0];
+      }
+      return null;
+    },
   },
 
   computed: {
+
     filteredTodo() {
       return this.todos.filter((todo) =>
-        todo.title.toLowerCase().includes(this. search_task.toLowerCase())
+        todo.title.toLowerCase().includes(this.search_task.toLowerCase())
       );
     },
   },
+
 };
 </script>
 
@@ -367,10 +372,10 @@ export default {
 .datapicker_todo .v-field__overlay {
   background: none;
 }
-.pointer{
+.pointer {
   cursor: pointer;
 }
-.finished{
+.finished {
   text-decoration: line-through;
 }
 .background_button_back{
