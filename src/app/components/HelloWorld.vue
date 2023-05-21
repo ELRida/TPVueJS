@@ -124,7 +124,7 @@
       <v-card class="dialog_add">
         <v-card-title style="justify-content: center">
           <v-sheet class="mb-4 mt-4 text-center title-bold text-delete">
-            Modification de tâche
+            Modification de la tâche
           </v-sheet>
         </v-card-title>
         <v-text-field
@@ -136,7 +136,7 @@
           <div class="title_todo">
             <v-text-field
               type="time"
-              label="Date"
+              label="Heure"
               v-model="timeCreate"
             />
           </div>
@@ -251,7 +251,7 @@ export default {
       let todo = this.todos.find((x) => x.id === id);
       this.title = todo.title;
       this.editTodo = true;
-      this.timeCreate = null;
+      this.timeCreate = todo.todoDate.substring(11, 16);
 
       console.log(todo.todoDate.substring(0, 10))
       this.due = this.formattedDueDate(todo.todoDate.substring(0, 10));
@@ -269,6 +269,7 @@ export default {
 
       this.snackbar = true;
       this.textSnackBar = value;
+      this.editTodo = false;
     },
     
     firstCharUpper(str) {
