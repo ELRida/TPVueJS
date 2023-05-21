@@ -13,9 +13,14 @@ export const useTodoStore = defineStore('todo', {
       try {
         const todoService = new TodoService();
         const todos = await todoService.getTodos();
-        this.todos = todos;
+        const modifiedTodos = todos.map(todo => ({
+          ...todo,
+          createdDate: new Date(todo.createdDate).toLocaleDateString("fr-FR") + " " + new Date(todo.createdDate).toLocaleTimeString("fr-FR"),
+          todoDate: new Date(todo.todoDate).toLocaleDateString("fr-FR") + " " + new Date(todo.createdDate).toLocaleTimeString("fr-FR")
+        }));
+        this.todos = modifiedTodos;
       } catch (error) {
-        console.error('Erreur lors de la récupération des tâches :', error);
+        return 'Erreur lors de la récupération des tâches';
       }
     },
 
@@ -25,8 +30,9 @@ export const useTodoStore = defineStore('todo', {
         const newTodo = await todoService.createTodo(todo);
         this.todos.push(newTodo);
       } catch (error) {
-        console.error('Erreur lors de l\'ajout de la tâche :', error);
+        return 'Erreur lors de l\'ajout de la tâche : ' + todo.id;
       }
+      return "Tâche ajoutée";
     },
 
     async updateTodoStatus(todo: Todo) {
@@ -38,22 +44,20 @@ export const useTodoStore = defineStore('todo', {
           this.todos[index] = updatedTodo;
         }
       } catch (error) {
-        console.error('Erreur lors de la mise à jour de la tâche :', error);
+        return 'Erreur lors de la mise à jour de la tâche : ' + todo.id;
       }
+      return "Tâche mis à jour";
     },
 
-    async removeTodo(todo: Todo) {
+    async removeTodo(todoId: number) {
       try {
-        const todoService = new TodoService();
-       if (typeof todo.id === 'number') {
-          await todoService.deleteTodo(todo.id);
-          this.todos = this.todos.filter((t) => t.id !== todo.id);
-        } else {
-          console.error('Erreur lors de la suppression de la tâche : identifiant invalide');
-        }
+        const todoService = new TodoService(); 
+        await todoService.deleteTodo(todoId);
+        this.todos = this.todos.filter((t) => t.id !== todoId);
       } catch (error) {
-        console.error('Erreur lors de la suppression de la tâche :', error);
+        return 'Erreur lors de la suppression de la tâche id : ' + todoId;
       }
+      return "Tâche supprimée";
     },
   },
 });
