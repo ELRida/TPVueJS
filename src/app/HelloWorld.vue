@@ -95,36 +95,27 @@
   </v-container>
 </template>
 
-<script>
-
-import { createApp } from 'vue';
-import { createPinia } from 'pinia';
-import App from '../App.vue';
+<script> 
 import { useTodoStore } from './store/todoStore';
 
-const pinia = createPinia();
-const app = createApp(App);
-
-app.use(pinia);
-app.mount('#app');
 
 export default {
   name: "HelloWorld",
 
   setup() {
-    const todoStore = useTodoStore(); // Instancie le store
+    //const todoStore = useTodoStore(); // Instancie le store
 
     // Déclare les variables du store que tu souhaites utiliser dans ton template
-    const todos = todoStore.todos;
+    //const todos = todoStore.todos;
 
     // Déclare les méthodes d'action du store que tu souhaites utiliser dans tes méthodes
-    const addTodoList = () => {
-      todoStore.addTodo();
-    };
+    // const addTodoList = () => {
+    //   todoStore.addTodo();
+    // };
 
     return {
-      todos,
-      addTodoList,
+      //todos,
+      //addTodoList,
     };
   },
 
@@ -181,7 +172,7 @@ export default {
   methods: {
     addTodoList() {
       this.addTodo = true;
-      todoStore.addTodo(); // Appelle la méthode d'action du store
+      //todoStore.addTodo(); // Appelle la méthode d'action du store
     },
     closeDialog() {
       this;

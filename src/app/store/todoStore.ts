@@ -45,8 +45,12 @@ export const useTodoStore = defineStore('todo', {
     async removeTodo(todo: Todo) {
       try {
         const todoService = new TodoService();
-        await todoService.deleteTodo(todo.id);
-        this.todos = this.todos.filter((t) => t.id !== todo.id);
+       if (typeof todo.id === 'number') {
+          await todoService.deleteTodo(todo.id);
+          this.todos = this.todos.filter((t) => t.id !== todo.id);
+        } else {
+          console.error('Erreur lors de la suppression de la tâche : identifiant invalide');
+        }
       } catch (error) {
         console.error('Erreur lors de la suppression de la tâche :', error);
       }
