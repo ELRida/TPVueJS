@@ -85,7 +85,7 @@
               class="datapicker_todo"
               type="date"
               label="Date"
-              v-model="due"
+              v-model="addTodoDate"
             />
           </div>
         </div>
@@ -145,7 +145,7 @@
               class="datapicker_todo"
               type="date"
               label="Date"
-              v-model="due"
+              v-model="modifyTodoDate"
             />
           </div>
         </div>
@@ -192,9 +192,9 @@ export default {
     return {
       snackbar: false,
       textSnackBar: "",
-
       todos: todoStore.todos,
-
+      modifyTodoDate: null,
+      addTodoDate: null,
       title: "",
       editedTask: null,
       addTodo: false,
@@ -212,8 +212,8 @@ export default {
       this.addTodo = true;
       this.title = "";
       this.timeCreate="";
-      this.due = null;
-      if (this.date === this.due) {
+      this.addTodoDate = null;
+      if (this.date === this.addTodoDate) {
         this.date = null;
       }
     },
@@ -231,7 +231,7 @@ export default {
 
       var todo = {
         title : this.title,
-        todoDate :  new Date(this.due).toLocaleDateString("fr-FR") + " " + new Date("2001-11-12T"+this.timeCreate).toLocaleTimeString("fr-FR").split('T')[0],
+        todoDate :  new Date(this.addTodoDate).toLocaleDateString("fr-FR") + " " + new Date("2001-11-12T"+this.timeCreate).toLocaleTimeString("fr-FR").split('T')[0],
         status : "à faire",
         createdDate : new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR")
       }
@@ -242,7 +242,7 @@ export default {
       this.snackbar = true;
       this.textSnackBar = value;
 
-      if (this.date === this.due) {
+      if (this.date === this.addTodoDate) {
         this.date = null;
       }
     },
@@ -254,8 +254,8 @@ export default {
       this.timeCreate = todo.todoDate.substring(11, 16);
 
       console.log("todoDate", todo.todoDate)
-      this.due = this.formattedDueDate(todo.todoDate.substring(0, 10));
-      console.log('due',this.due)
+      this.modifyTodoDate = this.formattedDueDate(todo.todoDate.substring(0, 10));
+      console.log('modifyTodoDate',this.modifyTodoDate)
       this.editedTask = todo;
     },
 
@@ -263,8 +263,7 @@ export default {
       if (!this.editedTask) return;
 
       this.editedTask.title = this.title;
-      this.editedTask.createdDate = this.due;
-      this.editedTask.todoDate = new Date().toLocaleDateString("fr-FR") + " " +  new Date("2001-11-12T"+this.timeCreate).toLocaleTimeString("fr-FR").split('T')[0];
+      this.editedTask.todoDate = new Date(this.modifyTodoDate).toLocaleDateString("fr-FR") + " " +  new Date("2001-11-12T"+this.timeCreate).toLocaleTimeString("fr-FR").split('T')[0];
 
       let value = await todoStore.updateTodoStatus(this.editedTask);
 
