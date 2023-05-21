@@ -263,6 +263,7 @@ export default {
       this.snackbar = true;
       this.textSnackBar = value;
     },
+    
     firstCharUpper(str) {
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
