@@ -8,7 +8,7 @@
       <v-text-field
         placeholder="Recherchez une tâche"
         class="search_todo"
-        v-model="search_room"
+        v-model=" search_task"
       />
 
       <div class="button_add">
@@ -26,7 +26,7 @@
           <th scope="col">Tâches</th>
           <th scope="col">Date de création</th>
           <th scope="col">Statut</th>
-          <th scope="col">À faire pour</th>
+          <th scope="col">À faire pour le</th>
           <th scope="col">Actions</th>
         </tr>
       </thead> 
@@ -34,9 +34,15 @@
       <tbody>
         <tr v-for="todo in filteredTodo" :key="todo.id">
           <th scope="row">{{ todo.id }}</th>
-          <td>{{ todo.title }}</td>
+          <td><span :class="{'finished': todo.status === 'terminée'}">{{ todo.title }}</span></td>
           <td>{{ todo.createdDate }}</td>
-          <td>{{ todo.status }}</td>
+          <td><span class="pointer" @click="changeStatus(todo)"
+              :class="{'text-danger': todo.status === 'à faire',
+                        'text-warning': todo.status === 'en cours',
+                        'text-success': todo.status === 'terminée',
+            
+            }"
+            >{{ firstCharUpper(todo.status) }}</span></td>
           <td>{{ todo.todoDate }}</td>
           <td>
             <v-icon small class="mr-2" @click="dialogEditTask(todo.id)"
@@ -76,6 +82,7 @@
             />
           </div>
         </div>
+        
 
         <v-card-actions class="text-center">
           <v-spacer class="confirmChoice">
@@ -185,10 +192,11 @@ export default {
       addTodo: false,
       editTodo: false,
       createdDate: null,
-      search_room: "",
+       search_task: "",
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10), 
+      status: ['à faire', 'en cours', 'terminée']
     };
   },
 
@@ -233,13 +241,14 @@ export default {
     },
 
     async dialogEditTask(id) {
+      let todo = this.todos.find((x) => x.id === id);
+  this.title = todo.title;
+  this.editTodo = true;
 
-      let todo = this.todos.find(x => x.id == id);
-      this.title = todo.title;
-      this.due = todo.createdDate;
-      this.editTodo = true;
- 
-      this.editedTask = todo;
+  // Initialisation de la date par défaut avec la valeur du todo
+  this.due = todo.todoDate.substring(0, 10);
+
+  this.editedTask = todo;
     },
 
     async editTask() { 
@@ -247,7 +256,6 @@ export default {
  
       this.editedTask.title = this.title;
       this.editedTask.createdDate = this.due;
-      this.editedTask.status = "pas de statut";
       this.editedTask.todoDate = new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR");
 
       let value = await todoStore.updateTodoStatus(this.editedTask);
@@ -255,6 +263,9 @@ export default {
       this.snackbar = true;
       this.textSnackBar = value;
     }, 
+    firstCharUpper(str){
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  },
 
     async deleteTask(id) {
       this.todos.splice(this.todos.indexOf(this.todos.find(x => x.id === id)), 1);
@@ -263,14 +274,25 @@ export default {
       this.snackbar = true;
       this.textSnackBar = value;
     }, 
+    async changeStatus(todo) {
+  let newIndex = this.status.indexOf(todo.status) + 1;
+  if (newIndex >= this.status.length) newIndex = 0;
+  const newStatus = this.status[newIndex];
 
+  todo.status = newStatus;
 
+  let value = await todoStore.updateTodoStatus(todo);
+
+  this.snackbar = true;
+  this.textSnackBar = value;
+},
+  
   },
 
   computed: {
     filteredTodo() {
       return this.todos.filter((todo) =>
-        todo.title.toLowerCase().includes(this.search_room.toLowerCase())
+        todo.title.toLowerCase().includes(this. search_task.toLowerCase())
       );
     },
   },
@@ -323,5 +345,11 @@ export default {
 }
 .datapicker_todo .v-field__overlay {
   background: none;
+}
+.pointer{
+  cursor: pointer;
+}
+.finished{
+  text-decoration: line-through;
 }
 </style>
