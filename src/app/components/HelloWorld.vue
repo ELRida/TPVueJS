@@ -32,8 +32,6 @@
       </thead> 
 
       <tbody>
-
-
         <tr v-for="todo in filteredTodo" :key="todo.id">
           <th scope="row">{{ todo.id }}</th>
           <td>{{ todo.title }}</td>
@@ -148,7 +146,21 @@
       </v-card>
     </v-dialog>
 
-    <!--DELETE-->
+     <v-snackbar
+      v-model="snackbar"
+      :timeout="2000">
+      {{ textSnackBar }}
+
+      <template v-slot:actions>
+        <v-btn
+          color="pink"
+          variant="text"
+          @click="snackbar = false"
+        >
+          Fermer
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -164,7 +176,11 @@ export default {
   data() {
     
     return {   
+      snackbar: false,
+      textSnackBar: "",
+
       todos: todoStore.todos,
+      
       title: "",
       editedTask: null,
       addTodo: false,
@@ -207,8 +223,10 @@ export default {
       }
  
       let value = await todoStore.addTodo(todo);
-      console.log(value);
       this.closeDialog();
+
+      this.snackbar = true;
+      this.textSnackBar = value;
 
       if (this.date === this.due) {
         this.date = null; 
@@ -234,13 +252,17 @@ export default {
       this.editedTask.todoDate = new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR");
 
       let value = await todoStore.updateTodoStatus(this.editedTask);
-      console.log(value);
+
+      this.snackbar = true;
+      this.textSnackBar = value;
     }, 
 
     async deleteTask(id) {
+      this.todos.splice(this.todos.indexOf(this.todos.find(x => x.id === id)), 1);
       let value = await todoStore.removeTodo(id);
-      console.log(value); 
-      // Afficher toast
+
+      this.snackbar = true;
+      this.textSnackBar = value;
     }, 
 
 
