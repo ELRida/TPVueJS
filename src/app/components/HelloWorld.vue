@@ -3,12 +3,14 @@
     <div class="contianer_todo">
       <h1 class="titleTodo">Ma Todolist</h1>
     </div>
+
     <div class="box_search_add">
       <v-text-field
         placeholder="Recherchez une tâche"
         class="search_todo"
         v-model="search_room"
-      ></v-text-field>
+      />
+
       <div class="button_add">
         <button class="add_todo" @click="addTodoList()">
           <v-icon class="close_icon">mdi-plus</v-icon>
@@ -16,6 +18,7 @@
         </button>
       </div>
     </div>
+
     <table class="table">
       <thead>
         <tr>
@@ -26,22 +29,25 @@
           <th scope="col">Actions</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr v-for="(task, index) in filteredTodo" :key="index">
-          <th scope="row">1</th>
-          <td>{{task.name}}</td>
-          <td>{{ task.date }}</td>
-          <td>{{ task.status }}</td>
-          <td> <v-icon small class="mr-2" @click="dialogEditTask(index)"> mdi-pencil </v-icon>
-                    <v-icon small @click="deleteTask(index)"> mdi-delete </v-icon>
-</td>
+
+
+        <tr v-for="todo in filteredTodo" :key="todo.id">
+          <th scope="row">{{ todo.id }}</th>
+          <td>{{ todo.title }}</td>
+          <td>{{ todo.createdDate }}</td>
+          <td>{{ todo.status }}</td>
+          <td>
+            <v-icon small class="mr-2" @click="dialogEditTask(todo.id)"
+              >mdi-pencil</v-icon
+            >
+            <v-icon small @click="deleteTask(todo.id)">mdi-delete</v-icon>
+          </td>
         </tr>
-    
-    
       </tbody>
     </table>
-    <!-- DIALOG -->
-        <!-- ADD DIALOG -->
+
     <v-dialog
       class="dialogDeleteTemplate"
       v-model="addTodo"
@@ -54,46 +60,47 @@
             Ajouter une tâche
           </v-sheet>
         </v-card-title>
+
         <div class="box_add">
-      <v-text-field
-        placeholder="Nom de la tâche"
-        class="add_todo"
-        v-model="task"
-      ></v-text-field>
-      <div >
-        
-        <v-text-field class="datapicker_todo" type="date" label="Date" v-model="due"></v-text-field>
+          <v-text-field
+            placeholder="Nom de la tâche"
+            class="add_todo"
+            v-model="title"
+          />
+          <div>
+            <v-text-field
+              class="datapicker_todo"
+              type="date"
+              label="Date"
+              v-model="due"
+            />
+          </div>
+        </div>
 
-
-      
-      </div>
-    </div>
         <v-card-actions class="text-center">
-          
           <v-spacer class="confirmChoice">
             <v-btn
               style="margin-right: 15px"
               class="btn-action-cancel"
               text
               @click="closeDialog()"
-              >Retour</v-btn
             >
+              Annuler
+            </v-btn>
             <v-btn
               class="btn-action"
               text
               @click="submitTask()"
               :loading="loadingDelete"
             >
-              Valider</v-btn
-            >
+              Valider
+            </v-btn>
           </v-spacer>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-
-       <!-- EDIT DIALOG -->
-       <v-dialog
+    <v-dialog
       class="dialogDeleteTemplate"
       v-model="editTodo"
       width="500"
@@ -106,86 +113,76 @@
           </v-sheet>
         </v-card-title>
         <div class="box_add">
-      <v-text-field
-        placeholder="Nom de la tâche"
-        class="add_todo"
-        v-model="task"
-      ></v-text-field>
-      <div >
-        
-        <v-text-field class="datapicker_todo" type="date" label="Date" v-model="due"></v-text-field>
-
-
-      
-      </div>
-    </div>
+          <v-text-field
+            placeholder="Nom de la tâche"
+            class="add_todo"
+            v-model="title"
+          />
+ 
+          <div>
+            <v-text-field
+              class="datapicker_todo"
+              type="date"
+              label="Date"
+              v-model="due"
+            />
+          </div>
+        </div>
         <v-card-actions class="text-center">
-          
           <v-spacer class="confirmChoice">
             <v-btn
               style="margin-right: 15px"
               class="btn-action-cancel"
               text
-              @click="closeDialogEdit()"
-              >Retour</v-btn
-            >
-            <v-btn
-              class="btn-action"
-              text
               @click="editTask()"
             >
-              Valider</v-btn
-            >
+              Valider
+            </v-btn>
+            <v-btn class="btn-action" text @click="closeDialogEdit()">
+              Annuler
+            </v-btn>
           </v-spacer>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!--DELETE-->
-
-  
   </v-container>
 </template>
 
 <script>
-export default {
-  
-  name: "HelloWorld",
- 
+import store from '../stores/pinia'
+import { useTodoStore } from "../stores/todoStore.ts";
 
+const todoStore = useTodoStore(store);
+
+export default {
+  name: "HelloWorld",
   data() {
-  return {
-    task:'',
-    editedTask: null,
-    tasks: [
-      {
-        name: 'Oui monsieur',
-        date: new Date().toLocaleDateString('fr-FR'),
-        status: 'to-do',
-      },
-      {
-        name: 'Oui',
-        date: new Date().toLocaleDateString('fr-FR'),
-        status: 'in-progress',
-      }
-    ],
-    addTodo: false,
-    editTodo: false,
-    due: null,
-    search_room: "",
-    date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-  };
-},
+    todoStore.fetchTodos()
+    return {  
+      todos: todoStore.todos,
+      title: "",
+      editedTask: null,
+      addTodo: false,
+      editTodo: false,
+      createdDate: null,
+      search_room: "",
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10), 
+    };
+  },
+
+  
   methods: {
     addTodoList() {
       this.addTodo = true;
-      this.task = '';
-      this.due = null; 
-
-  if (this.date === this.due) {
-    this.date = null;
-  }
-
+      this.title = "";
+      this.due = null;
+      if (this.date === this.due) {
+        this.date = null;
+      }
     },
     closeDialog() {
       this.addTodo = false;
@@ -194,56 +191,59 @@ export default {
       this.editTodo = false;
     },
     submitTask() {
-  if (this.task.length === 0) return;
+      if (this.title.length === 0) return;
 
-  this.tasks.push({
-    name: this.task,
-    date: this.due, 
-    status: 'todo'
-  });
+      this.todos.push({
+        title: this.title,
+        date: this.due,
+        status: "todo",
+      });
 
-  this.task = '';
-  this.due = null; 
+      this.title = "";
+      this.due = null;
 
-  if (this.date === this.due) {
-    this.date = null;
-  }
-},
-dialogEditTask(index){
-  this.editTodo = true;
-  this.task = this.tasks[index].name;
-  
-  if (index < 2) { 
-    this.due = new Date().toLocaleDateString('fr-FR');
-  } else {
-    this.due = this.tasks[index].date;
-  }
-  
-  this.editedTask = this.tasks[index];
-},
-editTask() {
-  if (!this.editedTask) return;
+      if (this.date === this.due) {
+        this.date = null;
+      }
+    },
 
-  this.editedTask.name = this.task;
-  this.editedTask.date = this.due;
-  this.task = '';
-  this.due = null;
-  this.editedTask = null;
-  this.editTodo = false;
-},
-    deleteTask(index){
-      this.tasks.splice(index, 1 );
-    }
+    async dialogEditTask(id) {
+
+      let todo = this.todos.find(x => x.id == id);
+      this.title = todo.title;
+      this.due = todo.createdDate;
+      this.editTodo = true;
+ 
+      this.editedTask = this.todos.find(x => x.id == id);
+    },
+
+    async editTask() {
+      if (!this.editedTask) return;
+
+      this.editedTask.title = this.title;
+      this.editedTask.date = this.due;
+      this.title = "";
+      this.due = null;
+      this.editedTask = null;
+      this.editTodo = false;
+    }, 
+
+    async deleteTask(id) {
+      let value = await todoStore.removeTodo(id);
+      console.log(value); 
+      // Afficher toast
+    }, 
+
+
   },
 
-  computed:{
+  computed: {
     filteredTodo() {
-      return this.tasks.filter((task) =>
-        task.name.toLowerCase().includes(this.search_room.toLowerCase())
+      return this.todos.filter((todo) =>
+        todo.title.toLowerCase().includes(this.search_room.toLowerCase())
       );
     },
-  }
-
+  },
 };
 </script>
 
@@ -282,16 +282,16 @@ editTask() {
 .add_todo .v-field__overlay {
   background: none;
 }
-.dialog_add{
+.dialog_add {
   padding: 12px;
 }
-.box_add{
+.box_add {
   display: flex;
 }
-.box_add .v-input--horizontal{
+.box_add .v-input--horizontal {
   width: 240px;
 }
-.datapicker_todo .v-field__overlay{
+.datapicker_todo .v-field__overlay {
   background: none;
 }
 </style>
