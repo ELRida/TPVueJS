@@ -184,26 +184,31 @@ export default {
         this.date = null;
       }
     },
+    
     closeDialog() {
       this.addTodo = false;
     },
+
     closeDialogEdit() {
       this.editTodo = false;
     },
-    submitTask() {
-      if (this.title.length === 0) return;
 
-      this.todos.push({
-        title: this.title,
-        date: this.due,
-        status: "todo",
-      });
+    async submitTask() {
+      if (this.title.length === 0) return; // il faut mettre des notifications toast
 
-      this.title = "";
-      this.due = null;
+      var todo = {
+        title : this.title,
+        createdDate :  new Date(this.due).toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR"),
+        status : "à faire",
+        todoDate : new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR")
+      }
+ 
+      let value = await todoStore.addTodo(todo);
+      console.log(value);
+      this.closeDialog();
 
       if (this.date === this.due) {
-        this.date = null;
+        this.date = null; 
       }
     },
 
