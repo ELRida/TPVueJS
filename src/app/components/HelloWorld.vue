@@ -184,7 +184,8 @@ import store from "../stores/pinia";
 import { useTodoStore } from "../stores/todoStore.ts";
 
 const todoStore = useTodoStore(store);
-await todoStore.fetchTodos();
+let value = await todoStore.fetchTodos();
+
 
 export default {
   name: "TodoApp",
@@ -193,7 +194,6 @@ export default {
     return {
       snackbar: false,
       textSnackBar: "",
-      todos: todoStore.todos,
       modifyTodoDate: null,
       addTodoDate: null,
       title: "",
@@ -311,7 +311,13 @@ export default {
   },
 
   computed: {
-
+    todos() {
+      if (value) {
+        this.snackbar = true
+        this.textSnackBar = value
+      }
+      return todoStore.todos
+    },
     filteredTodo() {
       return this.todos.filter((todo) =>
         todo.title.toLowerCase().includes(this.search_task.toLowerCase())
